@@ -10,9 +10,11 @@ import java.security.NoSuchAlgorithmException;
 @Component
 public class HashingUtil {
 
+    private final static String HASHING_ALGORITHM = "SHA-256";
+
     public String hashString(String input) {
         try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            MessageDigest digest = MessageDigest.getInstance(HASHING_ALGORITHM);
             byte[] encodedHash = digest.digest(input.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(encodedHash);
         } catch (NoSuchAlgorithmException e) {

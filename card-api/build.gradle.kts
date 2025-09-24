@@ -6,7 +6,7 @@ plugins {
 
 group = "br.com.hyperativa"
 version = "0.0.1-SNAPSHOT"
-description = "Api service - backend challenge for hyperativa"
+description = "Card api service - backend challenge for hyperativa"
 
 java {
 	toolchain {
