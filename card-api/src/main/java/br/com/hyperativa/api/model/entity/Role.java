@@ -2,6 +2,7 @@ package br.com.hyperativa.api.model.entity;
 
 import br.com.hyperativa.api.model.enums.RoleEnum;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -28,4 +29,7 @@ public class Role {
     public Role(RoleEnum name) {
         this.name = name;
     }
+
+    @Embedded
+    private Audit audit = new Audit();
 }

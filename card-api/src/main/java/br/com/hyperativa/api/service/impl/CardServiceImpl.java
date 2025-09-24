@@ -4,6 +4,7 @@ import br.com.hyperativa.api.exception.CardAlreadyExistsException;
 import br.com.hyperativa.api.exception.CardNotFoundException;
 import br.com.hyperativa.api.exception.CardProcessingException;
 import br.com.hyperativa.api.integration.dto.CardMessageDto;
+import br.com.hyperativa.api.integration.producer.CardProducer;
 import br.com.hyperativa.api.model.dto.CardDto;
 import br.com.hyperativa.api.model.dto.response.UploadCardsResponseDTO;
 import br.com.hyperativa.api.model.entity.Card;
@@ -12,7 +13,7 @@ import br.com.hyperativa.api.model.enums.BatchStatusEnum;
 import br.com.hyperativa.api.repository.CardBatchRepository;
 import br.com.hyperativa.api.repository.CardRepository;
 import br.com.hyperativa.api.service.ICardService;
-import br.com.hyperativa.api.service.IMessageProducer;
+import br.com.hyperativa.api.service.IOutboxService;
 import br.com.hyperativa.api.util.HashingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,16 +31,16 @@ import java.util.UUID;
 @Slf4j
 public class CardServiceImpl implements ICardService {
 
-    private final IMessageProducer messageProducer;
+    private final CardProducer cardProducer;
     private final CardRepository cardRepository;
     private final HashingUtil hashingUtil;
     private final EncryptionService encryptionService;
     private final CardBatchRepository cardBatchRepository;
     private final RsaDecryptionService rsaDecryptionService;
 
-    public CardServiceImpl(IMessageProducer messageProducer, CardRepository cardRepository, HashingUtil hashingUtil,
+    public CardServiceImpl(CardProducer cardProducer, CardRepository cardRepository, HashingUtil hashingUtil,
                            EncryptionService encryptionService, CardBatchRepository cardBatchRepository, RsaDecryptionService rsaDecryptionService) {
-        this.messageProducer = messageProducer;
+        this.cardProducer = cardProducer;
         this.cardRepository = cardRepository;
         this.hashingUtil = hashingUtil;
         this.encryptionService = encryptionService;
@@ -86,7 +87,7 @@ public class CardServiceImpl implements ICardService {
                 .map(this::getCardNumberFromLine)
                 .filter(cardNumber -> !cardNumber.isEmpty())
                 .map(cardNumber -> new CardMessageDto(cardNumber, jobId))
-                .forEach(messageProducer::sendMessage);
+                .forEach(cardProducer::sendMessage);
     }
 
     private void handleProcessingError(Exception e, CardBatch batch, String filename) {

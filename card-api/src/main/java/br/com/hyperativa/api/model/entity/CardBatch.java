@@ -38,5 +38,5 @@ public class CardBatch {
     private BatchStatusEnum status;
 
     @Embedded
-    private Audit audit;
+    private Audit audit = new Audit();
 }

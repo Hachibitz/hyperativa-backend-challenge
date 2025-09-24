@@ -33,7 +33,7 @@ public class Card {
     private String cardNumberHash;
 
     @Embedded
-    private Audit audit;
+    private Audit audit = new Audit();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "card_batch_id")
