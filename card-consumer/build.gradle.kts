@@ -6,7 +6,7 @@ plugins {
 
 group = "br.com.hyperativa"
 version = "0.0.1-SNAPSHOT"
-description = "Config server for encapsulating project properties"
+description = "Card consumer service - backend challenge for hyperativa"
 
 java {
 	toolchain {
@@ -18,18 +18,10 @@ repositories {
 	mavenCentral()
 }
 
-extra["springCloudVersion"] = "2025.0.0"
-
 dependencies {
-	implementation("org.springframework.cloud:spring-cloud-config-server")
+	implementation("org.springframework.boot:spring-boot-starter")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
-
-dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-	}
 }
 
 tasks.withType<Test> {

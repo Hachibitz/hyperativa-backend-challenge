@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: api
+  profiles:
+    active: local
 
 springdoc:
   api-docs:

@@ -1,0 +1,58 @@
+# ===================================================================
+# CONFIGURAÇÕES PARA O PERFIL 'local'
+# Usado ao rodar a aplicação diretamente da IDE, sem Docker.
+# ===================================================================
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: api
+  # Configuração do Banco de Dados
+  datasource:
+    url: jdbc:mysql://localhost:3306/hyperativa_db?createDatabaseIfNotExist=true
+    username: ${your_user}
+    password: ${your_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # Configuração do JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update # Cria/atualiza o schema do banco no startup
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Configuração do RabbitMQ
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${your_user}
+    password: ${your_password}
+
+# ===================================================================
+# PROPRIEDADES CUSTOMIZADAS (replicando o que está no Docker Compose)
+# ===================================================================
+jwt:
+  secret: NDBGNTI2NzUzODcyNDEzRjQ0Mjg0NzJiNTA2NDUzNjc1NjZiNTk3MA== # Chave secreta JWT para ambiente local
+  expiration:
+    ms: 600000
+
+encryption:
+  aes:
+    secret-key: NDBGNTI2NzUzODcyNDEzRjQ0Mjg0NzJiNTA2NDUzNjc1NjZiNTk3MA== # Chave AES para ambiente local
+
+hyperativa:
+  rabbitmq:
+    queue: cards.queue
+    exchange: cards.exchange
+    routingkey: cards.routingkey
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
