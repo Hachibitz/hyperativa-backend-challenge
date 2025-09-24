@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,9 +34,6 @@ public class User {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(unique = true)
-    private String email;
 
     @Builder.Default
     private boolean enabled = true;

@@ -60,9 +60,9 @@ public class AuthService {
 
     public void signUp(SignUpRequestDto signUpRequest) {
         log.info("Attempting to sign up new user with username: {}", signUpRequest.getUsername());
-        if (userRepository.findByUsername(signUpRequest.getUsername()).isPresent() || userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
-            log.warn("Sign up failed for user {}: username or email already in use.", signUpRequest.getUsername());
-            throw new IllegalArgumentException("Username or Email already in use.");
+        if (userRepository.findByUsername(signUpRequest.getUsername()).isPresent()) {
+            log.warn("Sign up failed for user {}: username already in use.", signUpRequest.getUsername());
+            throw new IllegalArgumentException("Username already in use.");
         }
 
         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
@@ -70,7 +70,6 @@ public class AuthService {
 
         User user = User.builder()
                 .username(signUpRequest.getUsername())
-                .email(signUpRequest.getEmail())
                 .password(passwordEncoder.encode(signUpRequest.getPassword()))
                 .roles(Set.of(userRole))
                 .build();
