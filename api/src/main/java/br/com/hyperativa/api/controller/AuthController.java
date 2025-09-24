@@ -4,7 +4,7 @@ import br.com.hyperativa.api.aop.Loggable;
 import br.com.hyperativa.api.model.dto.request.AuthRequestDto;
 import br.com.hyperativa.api.model.dto.request.SignUpRequestDto;
 import br.com.hyperativa.api.model.dto.response.AuthResponseDto;
-import br.com.hyperativa.api.service.AuthService;
+import br.com.hyperativa.api.service.impl.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

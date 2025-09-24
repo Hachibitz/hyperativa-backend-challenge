@@ -1,4 +1,4 @@
-package br.com.hyperativa.api.service;
+package br.com.hyperativa.api.service.impl;
 
 import br.com.hyperativa.api.model.dto.request.AuthRequestDto;
 import br.com.hyperativa.api.model.dto.request.SignUpRequestDto;

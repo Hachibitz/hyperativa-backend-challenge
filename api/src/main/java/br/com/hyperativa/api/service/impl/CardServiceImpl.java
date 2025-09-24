@@ -35,14 +35,16 @@ public class CardServiceImpl implements ICardService {
     private final HashingUtil hashingUtil;
     private final EncryptionService encryptionService;
     private final CardBatchRepository cardBatchRepository;
+    private final RsaDecryptionService rsaDecryptionService;
 
     public CardServiceImpl(IMessageProducer messageProducer, CardRepository cardRepository, HashingUtil hashingUtil,
-                           EncryptionService encryptionService, CardBatchRepository cardBatchRepository) {
+                           EncryptionService encryptionService, CardBatchRepository cardBatchRepository, RsaDecryptionService rsaDecryptionService) {
         this.messageProducer = messageProducer;
         this.cardRepository = cardRepository;
         this.hashingUtil = hashingUtil;
         this.encryptionService = encryptionService;
         this.cardBatchRepository = cardBatchRepository;
+        this.rsaDecryptionService = rsaDecryptionService;
     }
 
     @Override
@@ -99,6 +101,7 @@ public class CardServiceImpl implements ICardService {
     @Override
     @Transactional
     public void insertSingleCard(CardDto cardDto) {
+        rsaDecryptCardDto(cardDto);
         String cardNumber = cardDto.getCardNumber();
         log.info("Attempting to insert single card.");
 
@@ -119,8 +122,9 @@ public class CardServiceImpl implements ICardService {
     @Override
     @Transactional(readOnly = true)
     public String checkCardExists(String cardNumber) {
+        String decryptedCardNumber = rsaDecryptCardNumber(cardNumber);
         log.info("Checking for existence of a card.");
-        String hash = hashingUtil.hashString(cardNumber);
+        String hash = hashingUtil.hashString(decryptedCardNumber);
 
         return cardRepository.findByCardNumberHash(hash)
                 .map(card -> card.getId().toString())
@@ -128,6 +132,14 @@ public class CardServiceImpl implements ICardService {
                     log.warn("Card with hash {} not found.", hash);
                     return new CardNotFoundException("Card not found.");
                 });
+    }
+
+    private void rsaDecryptCardDto(CardDto cardDto) {
+        cardDto.setCardNumber(rsaDecryptCardNumber(cardDto.getCardNumber()));
+    }
+
+    private String rsaDecryptCardNumber(String cardNumber) {
+        return rsaDecryptionService.decrypt(cardNumber);
     }
 
     private CardBatch createBatchRecord(String fileName, String lotNumber) {
