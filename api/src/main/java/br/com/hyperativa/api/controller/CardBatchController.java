@@ -1,5 +1,6 @@
 package br.com.hyperativa.api.controller;
 
+import br.com.hyperativa.api.aop.Loggable;
 import br.com.hyperativa.api.model.dto.response.BatchStatusResponseDto;
 import br.com.hyperativa.api.service.ICardBatchService;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class CardBatchController {
     }
 
     @GetMapping("/{jobId}")
+    @Loggable
     public ResponseEntity<BatchStatusResponseDto> getBatchStatus(@PathVariable UUID jobId) {
         BatchStatusResponseDto status = cardBatchService.getBatchStatus(jobId);
         return ResponseEntity.ok(status);

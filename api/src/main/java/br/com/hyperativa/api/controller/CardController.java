@@ -1,5 +1,6 @@
 package br.com.hyperativa.api.controller;
 
+import br.com.hyperativa.api.aop.Loggable;
 import br.com.hyperativa.api.model.dto.CardDto;
 import br.com.hyperativa.api.model.dto.response.UploadCardsResponseDTO;
 import br.com.hyperativa.api.service.ICardService;
@@ -20,18 +21,21 @@ public class CardController {
     }
 
     @PostMapping("/upload")
+    @Loggable
     public ResponseEntity<UploadCardsResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         UploadCardsResponseDTO response = cardService.processCardFile(file);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
     @PostMapping
+    @Loggable
     public ResponseEntity<Void> insertSingleCard(@Valid @RequestBody CardDto cardDto) {
         cardService.insertSingleCard(cardDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/check/{cardNumber}")
+    @Loggable
     public ResponseEntity<String> checkCard(@PathVariable String cardNumber) {
         String systemId = cardService.checkCardExists(cardNumber);
         return ResponseEntity.ok(systemId);

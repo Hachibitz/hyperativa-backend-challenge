@@ -10,6 +10,8 @@ import br.com.hyperativa.api.repository.RoleRepository;
 import br.com.hyperativa.api.repository.UserRepository;
 import br.com.hyperativa.api.security.CustomUserDetails;
 import br.com.hyperativa.api.security.JwtService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
+@Slf4j
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -27,7 +30,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthService(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthService(
+            @Lazy AuthenticationManager authenticationManager,
+            UserRepository userRepository,
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService
+    ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -36,17 +45,23 @@ public class AuthService {
     }
 
     public AuthResponseDto authenticate(AuthRequestDto request) {
+        log.info("Attempting to authenticate user: {}", request.getUsername());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        UserDetails userDetails = userRepository.findByUsername(request.getUsername()).map(CustomUserDetails::new).orElseThrow();
+        UserDetails userDetails = userRepository.findByUsername(request.getUsername())
+                .map(CustomUserDetails::new)
+                .orElseThrow();
         String token = jwtService.generateToken(userDetails);
+        log.info("User {} authenticated successfully.", request.getUsername());
         return new AuthResponseDto(token);
     }
 
     public void signUp(SignUpRequestDto signUpRequest) {
+        log.info("Attempting to sign up new user with username: {}", signUpRequest.getUsername());
         if (userRepository.findByUsername(signUpRequest.getUsername()).isPresent() || userRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
+            log.warn("Sign up failed for user {}: username or email already in use.", signUpRequest.getUsername());
             throw new IllegalArgumentException("Username or Email already in use.");
         }
 
@@ -61,5 +76,6 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+        log.info("User {} registered successfully with ID: {}", user.getUsername(), user.getId());
     }
 }
