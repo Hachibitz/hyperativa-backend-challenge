@@ -33,7 +33,7 @@ public class OutboxProcessor {
     @Transactional
     public void processPendingEvents() {
         log.trace("Running job to process PENDING outbox events...");
-        List<OutboxEvent> pendingEvents = outboxEventRepository.findTop100ByStatusOrderByCreatedAtAsc(OutboxEventStatus.PENDING);
+        List<OutboxEvent> pendingEvents = outboxEventRepository.findTop100ByStatusOrderByAuditCreatedAtAsc(OutboxEventStatus.PENDING);
 
         if (!pendingEvents.isEmpty()) {
             log.info("Found {} PENDING outbox event(s) to process.", pendingEvents.size());

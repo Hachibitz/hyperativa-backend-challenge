@@ -49,5 +49,6 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @Embedded
+    @Builder.Default
     private Audit audit = new Audit();
 }
