@@ -1,13 +1,13 @@
 package br.com.hyperativa.api.exception.advice;
 
-import br.com.hyperativa.api.exception.AesEncryptionException;
 import br.com.hyperativa.api.exception.BatchNotFoundException;
 import br.com.hyperativa.api.exception.CardAlreadyExistsException;
 import br.com.hyperativa.api.exception.CardNotFoundException;
 import br.com.hyperativa.api.exception.CardProcessingException;
 import br.com.hyperativa.api.exception.EndToEndEncryptionException;
-import br.com.hyperativa.api.exception.HashingException;
 import br.com.hyperativa.api.model.dto.response.ErrorResponseDto;
+import br.com.hyperativa.card_common.exception.AesEncryptionException;
+import br.com.hyperativa.card_common.exception.HashingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

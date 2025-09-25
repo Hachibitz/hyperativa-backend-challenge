@@ -17,9 +17,10 @@ services:
   # Serviço do Banco de Dados MySQL
   db:
     image: mysql:8.0
+    platform: linux/amd64
     container_name: mysql_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=hyperativa_db
@@ -27,14 +28,21 @@ services:
       - MYSQL_PASSWORD=hyper_password
     volumes:
       - ./docker/db/init:/docker-entrypoint-initdb.d
+    # Garante que o MySQL esteja pronto antes dos outros serviços iniciarem
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - hyperativa-net
 
   # Serviço da API Principal
   api:
     build:
-      context: ./api
+      context: .
       dockerfile: Dockerfile
+      target: api
     container_name: api-service
     ports:
       - "8080:8080"
@@ -52,16 +60,19 @@ services:
       - HYPERATIVA_RABBITMQ_EXCHANGE=cards.exchange
       - HYPERATIVA_RABBITMQ_ROUTINGKEY=cards.routingkey
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy # Espera o healthcheck do DB passar
+      rabbitmq:
+        condition: service_started
     networks:
       - hyperativa-net
 
   # Serviço do Consumer de Cartões
   card-consumer:
     build:
-      context: ./card-consumer
+      context: .
       dockerfile: Dockerfile
+      target: consumer
     container_name: card-consumer-service
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hyperativa_db?createDatabaseIfNotExist=true
@@ -73,12 +84,13 @@ services:
       - ENCRYPTION_AES_SECRET-KEY=KVQcNxRLaSI0LmvtgXx5AH+9VOIARMMk3o34QLSSFNE=
       - HYPERATIVA_RABBITMQ_QUEUE=cards.queue
     depends_on:
-      - db
-      - rabbitmq
+      db:
+        condition: service_healthy # Espera o healthcheck do DB passar
+      rabbitmq:
+        condition: service_started
     networks:
       - hyperativa-net
 
 networks:
   hyperativa-net:
     driver: bridge
-    

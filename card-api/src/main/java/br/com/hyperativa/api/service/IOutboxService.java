@@ -1,6 +1,6 @@
 package br.com.hyperativa.api.service;
 
-import br.com.hyperativa.api.integration.dto.CardMessageDto;
+import br.com.hyperativa.card_common.integration.dto.CardMessageDto;
 
 /**
  * Serviço responsável por criar eventos na tabela Outbox.

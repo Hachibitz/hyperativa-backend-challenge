@@ -1,7 +1,7 @@
 package br.com.hyperativa.api.model.mapper;
 
 import br.com.hyperativa.api.model.dto.response.BatchStatusResponseDto;
-import br.com.hyperativa.api.model.entity.CardBatch;
+import br.com.hyperativa.card_common.entity.CardBatch;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

@@ -1,7 +1,7 @@
 package br.com.hyperativa.api.integration.producer;
 
-import br.com.hyperativa.api.integration.dto.CardMessageDto;
 import br.com.hyperativa.api.integration.producer.strategy.AbstractOutboxProducer;
+import br.com.hyperativa.card_common.integration.dto.CardMessageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 

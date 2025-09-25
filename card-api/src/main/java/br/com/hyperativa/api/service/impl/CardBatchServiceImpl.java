@@ -2,10 +2,10 @@ package br.com.hyperativa.api.service.impl;
 
 import br.com.hyperativa.api.exception.BatchNotFoundException;
 import br.com.hyperativa.api.model.dto.response.BatchStatusResponseDto;
-import br.com.hyperativa.api.model.entity.CardBatch;
 import br.com.hyperativa.api.model.mapper.CardBatchMapper;
-import br.com.hyperativa.api.repository.CardBatchRepository;
 import br.com.hyperativa.api.service.ICardBatchService;
+import br.com.hyperativa.card_common.entity.CardBatch;
+import br.com.hyperativa.card_common.repository.CardBatchRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;

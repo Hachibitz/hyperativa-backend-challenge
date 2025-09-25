@@ -1,6 +1,7 @@
 package br.com.hyperativa.api.model.entity;
 
 import br.com.hyperativa.api.model.enums.RoleEnum;
+import br.com.hyperativa.card_common.entity.Audit;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

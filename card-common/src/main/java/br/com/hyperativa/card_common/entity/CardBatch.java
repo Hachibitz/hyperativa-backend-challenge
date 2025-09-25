@@ -1,7 +1,6 @@
-package br.com.hyperativa.api.model.entity;
+package br.com.hyperativa.card_common.entity;
 
-import br.com.hyperativa.api.model.enums.OutboxEventStatus;
-import br.com.hyperativa.card_common.entity.Audit;
+import br.com.hyperativa.card_common.enums.BatchStatusEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -10,33 +9,33 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "outbox_events")
-public class OutboxEvent {
+@Table(name = "card_batches")
+public class CardBatch {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false)
-    private String destinationExchange;
+    private String originalFileName;
 
     @Column(nullable = false)
-    private String destinationRoutingKey;
+    private String lotNumber;
 
-    @Lob
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String payload;
+    @Column(nullable = false)
+    private LocalDate processingDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OutboxEventStatus status = OutboxEventStatus.PENDING;
+    private BatchStatusEnum status;
 
     @Embedded
     private Audit audit = new Audit();

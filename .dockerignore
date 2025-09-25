@@ -1,0 +1,13 @@
+# Ignorar a pasta de cache e metadados do Gradle
+.gradle
+build
+*/build
+
+# Ignorar arquivos gerados por IDEs
+.idea
+*.iml
+.vscode
+
+# Ignorar logs e arquivos de sistema operacional
+*.log
+.DS_Store

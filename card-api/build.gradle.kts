@@ -22,6 +22,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	mavenLocal()
 }
 
 extra["springCloudVersion"] = "2025.0.0"
@@ -29,6 +30,7 @@ val jjwtVersion = "0.12.6"
 val springdocVersion = "2.8.13"
 
 dependencies {
+	implementation("br.com.hyperativa:card-common:0.0.1-SNAPSHOT")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
