@@ -4,8 +4,8 @@ spring:
     # Configuração do Banco de Dados
     datasource:
       url: jdbc:mysql://localhost:3306/hyperativa_db
-      username: hyperativa_ms_app_user
-      password: HyperativaMSQL@2025
+      username: ${your_user}
+      password: ${your_password}
       driver-class-name: com.mysql.cj.jdbc.Driver
 
     # Configuração do JPA/Hibernate
@@ -18,8 +18,8 @@ spring:
     rabbitmq:
       host: localhost
       port: 5672
-      username: hyperativa
-      password: rabbit@hyperativa
+      username: ${your_user}
+      password: ${your_password}
 
 # Propriedades customizadas
 encryption:
