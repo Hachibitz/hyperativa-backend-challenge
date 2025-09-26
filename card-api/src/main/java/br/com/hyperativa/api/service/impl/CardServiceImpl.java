@@ -151,7 +151,6 @@ public class CardServiceImpl implements ICardService {
     public String checkCardExists(String cardNumber) {
         String decryptedCardNumber = rsaDecryptCardNumber(cardNumber);
         log.info("Checking for existence of a card after decryption.");
-        ValidateCardUtil.validateCardNumber(decryptedCardNumber);
         String hash = hashingUtil.hashString(decryptedCardNumber);
 
         return cardRepository.findByCardNumberHash(hash)
