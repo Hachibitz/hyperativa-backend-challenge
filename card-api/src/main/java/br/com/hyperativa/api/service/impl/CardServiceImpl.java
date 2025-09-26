@@ -52,7 +52,7 @@ public class CardServiceImpl implements ICardService {
 
     @Override
     @Transactional
-    public UploadCardsResponseDTO processCardFile(MultipartFile file) {
+    public UploadCardsResponseDTO processCardFile(MultipartFile file, Boolean isToUseLuhnAlg) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null.");
         }
@@ -60,7 +60,7 @@ public class CardServiceImpl implements ICardService {
         CardBatch batch = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             batch = processHeaderAndCreateBatch(reader, file.getOriginalFilename());
-            int errorCount = streamFileLinesToQueue(reader, batch.getId());
+            int errorCount = streamFileLinesToQueue(reader, batch.getId(), isToUseLuhnAlg);
             if (errorCount > 0) {
                 batch.setStatus(BatchStatusEnum.COMPLETED_WITH_ERRORS);
                 log.info("Batch {} processing finished with {} error(s).", batch.getId(), errorCount);
@@ -91,7 +91,7 @@ public class CardServiceImpl implements ICardService {
         return batch;
     }
 
-    private int streamFileLinesToQueue(BufferedReader reader, UUID jobId) {
+    private int streamFileLinesToQueue(BufferedReader reader, UUID jobId, Boolean isToUseLuhnAlg) {
         AtomicInteger errorCount = new AtomicInteger(0);
 
         reader.lines()
@@ -100,7 +100,9 @@ public class CardServiceImpl implements ICardService {
                 .filter(cardNumber -> !cardNumber.isEmpty())
                 .forEach(cardNumber -> {
                     try {
-                        ValidateCardUtil.validateCardNumber(cardNumber);
+                        if(isToUseLuhnAlg) {
+                            ValidateCardUtil.validateCardNumber(cardNumber);
+                        }
                         CardMessageDto message = new CardMessageDto(cardNumber, jobId);
                         cardProducer.sendMessage(message);
                     } catch (IllegalArgumentException e) {
@@ -122,11 +124,13 @@ public class CardServiceImpl implements ICardService {
 
     @Override
     @Transactional
-    public void insertSingleCard(EncryptedCardInsertRequestDto encryptedCardInsertRequestDto) {
+    public void insertSingleCard(EncryptedCardInsertRequestDto encryptedCardInsertRequestDto, Boolean isToUseLuhnAlg) {
         rsaDecryptCardDto(encryptedCardInsertRequestDto);
         String cardNumber = encryptedCardInsertRequestDto.getCardNumber();
         log.info("Attempting to insert single card after decryption.");
-        ValidateCardUtil.validateCardNumber(cardNumber);
+        if(isToUseLuhnAlg) {
+            ValidateCardUtil.validateCardNumber(cardNumber);
+        }
 
         String hash = hashingUtil.hashString(cardNumber);
         if (cardRepository.findByCardNumberHash(hash).isPresent()) {

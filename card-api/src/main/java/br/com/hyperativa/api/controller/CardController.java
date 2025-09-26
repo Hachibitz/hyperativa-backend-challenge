@@ -39,8 +39,8 @@ public class CardController {
     })
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Loggable
-    public ResponseEntity<UploadCardsResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
-        UploadCardsResponseDTO response = cardService.processCardFile(file);
+    public ResponseEntity<UploadCardsResponseDTO> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("isToUseLuhnAlg") Boolean isToUseLuhnAlg) {
+        UploadCardsResponseDTO response = cardService.processCardFile(file, isToUseLuhnAlg);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
@@ -52,8 +52,8 @@ public class CardController {
     })
     @PostMapping
     @Loggable
-    public ResponseEntity<Void> insertSingleCard(@Valid @RequestBody EncryptedCardInsertRequestDto encryptedCardInsertRequestDto) {
-        cardService.insertSingleCard(encryptedCardInsertRequestDto);
+    public ResponseEntity<Void> insertSingleCard(@Valid @RequestBody EncryptedCardInsertRequestDto encryptedCardInsertRequestDto, @RequestParam("isToUseLuhnAlg") Boolean isToUseLuhnAlg) {
+        cardService.insertSingleCard(encryptedCardInsertRequestDto, isToUseLuhnAlg);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
