@@ -2,30 +2,69 @@ package br.com.hyperativa.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import org.springframework.util.ResourceUtils;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 @Configuration
 public class CryptoConfig {
 
-    private final KeyPair keyPair;
+    private final PrivateKey privateKey;
+    private final PublicKey publicKey;
+    private final static String PRIVATE_KEY_CLASSPATH_LOCATION = "classpath:static/KeyPair/private_key.p8";
+    private final static String PUBLIC_KEY_CLASSPATH_LOCATION = "classpath:static/KeyPair/public_key.pub";
 
-    public CryptoConfig() throws NoSuchAlgorithmException {
-        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
-        generator.initialize(2048);
-        this.keyPair = generator.generateKeyPair();
+    public CryptoConfig() throws Exception {
+        this.privateKey = loadPrivateKey();
+        this.publicKey = loadPublicKey();
+    }
+
+    private PrivateKey loadPrivateKey() throws Exception {
+        File file = ResourceUtils.getFile(PRIVATE_KEY_CLASSPATH_LOCATION);
+        byte[] keyBytes = Files.readAllBytes(file.toPath());
+
+        String privateKeyPEM = new String(keyBytes)
+                .replace("-----BEGIN PRIVATE KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PRIVATE KEY-----", "");
+
+        byte[] decodedKey = Base64.getDecoder().decode(privateKeyPEM);
+
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKey);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePrivate(spec);
+    }
+
+    private PublicKey loadPublicKey() throws Exception {
+        File file = ResourceUtils.getFile(PUBLIC_KEY_CLASSPATH_LOCATION);
+        byte[] keyBytes = Files.readAllBytes(file.toPath());
+
+        String publicKeyPEM = new String(keyBytes)
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replaceAll(System.lineSeparator(), "")
+                .replace("-----END PUBLIC KEY-----", "");
+
+        byte[] decodedKey = Base64.getDecoder().decode(publicKeyPEM);
+
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePublic(spec);
     }
 
     @Bean
     public PrivateKey privateKey() {
-        return keyPair.getPrivate();
+        return privateKey;
     }
 
     @Bean
     public PublicKey publicKey() {
-        return keyPair.getPublic();
+        return publicKey;
     }
 }
