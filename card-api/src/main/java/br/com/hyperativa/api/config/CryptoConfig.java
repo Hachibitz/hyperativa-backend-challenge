@@ -2,9 +2,11 @@ package br.com.hyperativa.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -18,8 +20,8 @@ public class CryptoConfig {
 
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
-    private final static String PRIVATE_KEY_CLASSPATH_LOCATION = "classpath:static/KeyPair/private_key.p8";
-    private final static String PUBLIC_KEY_CLASSPATH_LOCATION = "classpath:static/KeyPair/public_key.pub";
+    private final static String PRIVATE_KEY_CLASSPATH_LOCATION = "static/KeyPair/private_key.p8";
+    private final static String PUBLIC_KEY_CLASSPATH_LOCATION = "static/KeyPair/public_key.pub";
 
     public CryptoConfig() throws Exception {
         this.privateKey = loadPrivateKey();
@@ -27,8 +29,11 @@ public class CryptoConfig {
     }
 
     private PrivateKey loadPrivateKey() throws Exception {
-        File file = ResourceUtils.getFile(PRIVATE_KEY_CLASSPATH_LOCATION);
-        byte[] keyBytes = Files.readAllBytes(file.toPath());
+        ClassPathResource resource = new ClassPathResource(PRIVATE_KEY_CLASSPATH_LOCATION);
+        byte[] keyBytes;
+        try (InputStream inputStream = resource.getInputStream()) {
+            keyBytes = inputStream.readAllBytes();
+        }
 
         String privateKeyPEM = new String(keyBytes)
                 .replace("-----BEGIN PRIVATE KEY-----", "")
@@ -43,8 +48,11 @@ public class CryptoConfig {
     }
 
     private PublicKey loadPublicKey() throws Exception {
-        File file = ResourceUtils.getFile(PUBLIC_KEY_CLASSPATH_LOCATION);
-        byte[] keyBytes = Files.readAllBytes(file.toPath());
+        ClassPathResource resource = new ClassPathResource(PUBLIC_KEY_CLASSPATH_LOCATION);
+        byte[] keyBytes;
+        try (InputStream inputStream = resource.getInputStream()) {
+            keyBytes = inputStream.readAllBytes();
+        }
 
         String publicKeyPEM = new String(keyBytes)
                 .replace("-----BEGIN PUBLIC KEY-----", "")
