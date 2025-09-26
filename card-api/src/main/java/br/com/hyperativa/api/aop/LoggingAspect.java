@@ -1,12 +1,14 @@
 package br.com.hyperativa.api.aop;
 
-import br.com.hyperativa.api.util.MaskingUtil;
+import br.com.hyperativa.card_common.util.MaskingUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,12 @@ public class LoggingAspect {
     public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().toShortString();
         String arguments = Arrays.stream(joinPoint.getArgs())
-                .map(MaskingUtil::maskObject)
+                .map(arg -> {
+                    if (arg instanceof MultipartFile file) {
+                        return String.format("MultipartFile[name=%s, size=%d]", file.getOriginalFilename(), file.getSize());
+                    }
+                    return MaskingUtil.maskObject(arg);
+                })
                 .collect(Collectors.joining(", "));
 
         log.info("==> ENTER: {} with args=[{}]", methodName, arguments);
