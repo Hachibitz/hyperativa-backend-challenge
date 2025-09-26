@@ -3,11 +3,8 @@ package br.com.hyperativa.api.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.util.ResourceUtils;
 
-import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
