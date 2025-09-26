@@ -24,7 +24,7 @@ spring:
 # Propriedades customizadas
 encryption:
   aes:
-    secret-key: NDBGNTI2NzUzODcyNDEzRjQ0Mjg0NzJiNTA2NDUzNjc1NjZiNTk3MA==
+    secret-key: ARiaCTRO1v2rYH8lX+aBS0AoBGiZ6v3+QatdbtY49r4= # Chave AES para ambiente local
 
 hyperativa:
   rabbitmq:

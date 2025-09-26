@@ -39,11 +39,11 @@ spring:
 jwt:
   secret: NDBGNTI2NzUzODcyNDEzRjQ0Mjg0NzJiNTA2NDUzNjc1NjZiNTk3MA== # Chave secreta JWT para ambiente local
   expiration:
-    ms: 600000
+    ms: 3600000
 
 encryption:
   aes:
-    secret-key: NDBGNTI2NzUzODcyNDEzRjQ0Mjg0NzJiNTA2NDUzNjc1NjZiNTk3MA== # Chave AES para ambiente local
+    secret-key: ARiaCTRO1v2rYH8lX+aBS0AoBGiZ6v3+QatdbtY49r4= # Chave AES para ambiente local
 
 hyperativa:
   rabbitmq:

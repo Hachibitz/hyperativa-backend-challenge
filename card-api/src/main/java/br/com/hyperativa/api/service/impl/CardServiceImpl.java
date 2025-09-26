@@ -4,9 +4,10 @@ import br.com.hyperativa.api.exception.CardAlreadyExistsException;
 import br.com.hyperativa.api.exception.CardNotFoundException;
 import br.com.hyperativa.api.exception.CardProcessingException;
 import br.com.hyperativa.api.integration.producer.CardProducer;
-import br.com.hyperativa.api.model.dto.CardDto;
+import br.com.hyperativa.api.model.dto.request.EncryptedCardInsertRequestDto;
 import br.com.hyperativa.api.model.dto.response.UploadCardsResponseDTO;
 import br.com.hyperativa.api.service.ICardService;
+import br.com.hyperativa.api.util.ValidateCardUtil;
 import br.com.hyperativa.card_common.entity.Card;
 import br.com.hyperativa.card_common.entity.CardBatch;
 import br.com.hyperativa.card_common.enums.BatchStatusEnum;
@@ -101,10 +102,11 @@ public class CardServiceImpl implements ICardService {
 
     @Override
     @Transactional
-    public void insertSingleCard(CardDto cardDto) {
-        rsaDecryptCardDto(cardDto);
-        String cardNumber = cardDto.getCardNumber();
-        log.info("Attempting to insert single card.");
+    public void insertSingleCard(EncryptedCardInsertRequestDto encryptedCardInsertRequestDto) {
+        rsaDecryptCardDto(encryptedCardInsertRequestDto);
+        String cardNumber = encryptedCardInsertRequestDto.getCardNumber();
+        log.info("Attempting to insert single card after decryption.");
+        ValidateCardUtil.validateCardNumber(cardNumber);
 
         String hash = hashingUtil.hashString(cardNumber);
         if (cardRepository.findByCardNumberHash(hash).isPresent()) {
@@ -124,7 +126,8 @@ public class CardServiceImpl implements ICardService {
     @Transactional(readOnly = true)
     public String checkCardExists(String cardNumber) {
         String decryptedCardNumber = rsaDecryptCardNumber(cardNumber);
-        log.info("Checking for existence of a card.");
+        log.info("Checking for existence of a card after decryption.");
+        ValidateCardUtil.validateCardNumber(decryptedCardNumber);
         String hash = hashingUtil.hashString(decryptedCardNumber);
 
         return cardRepository.findByCardNumberHash(hash)
@@ -135,8 +138,8 @@ public class CardServiceImpl implements ICardService {
                 });
     }
 
-    private void rsaDecryptCardDto(CardDto cardDto) {
-        cardDto.setCardNumber(rsaDecryptCardNumber(cardDto.getCardNumber()));
+    private void rsaDecryptCardDto(EncryptedCardInsertRequestDto encryptedCardInsertRequestDto) {
+        encryptedCardInsertRequestDto.setCardNumber(rsaDecryptCardNumber(encryptedCardInsertRequestDto.getCardNumber()));
     }
 
     private String rsaDecryptCardNumber(String cardNumber) {

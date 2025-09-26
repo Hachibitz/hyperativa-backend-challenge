@@ -1,7 +1,8 @@
 package br.com.hyperativa.api.controller;
 
 import br.com.hyperativa.api.aop.Loggable;
-import br.com.hyperativa.api.model.dto.CardDto;
+import br.com.hyperativa.api.model.dto.request.EncryptedCardCheckRequestDto;
+import br.com.hyperativa.api.model.dto.request.EncryptedCardInsertRequestDto;
 import br.com.hyperativa.api.model.dto.response.UploadCardsResponseDTO;
 import br.com.hyperativa.api.service.ICardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,20 +47,20 @@ public class CardController {
     })
     @PostMapping
     @Loggable
-    public ResponseEntity<Void> insertSingleCard(@Valid @RequestBody CardDto cardDto) {
-        cardService.insertSingleCard(cardDto);
+    public ResponseEntity<Void> insertSingleCard(@Valid @RequestBody EncryptedCardInsertRequestDto encryptedCardInsertRequestDto) {
+        cardService.insertSingleCard(encryptedCardInsertRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Verifica a existência de um cartão (com E2EE)", description = "Consulta se um determinado número de cartão existe na base. O número do cartão no path deve ser enviado criptografado com a chave pública da API.")
+    @Operation(summary = "Verifica a existência de um cartão (com E2EE)", description = "Consulta se um determinado número de cartão existe na base. O número do cartão no body deve ser enviado criptografado com a chave pública da API.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cartão encontrado, retorna o ID único do sistema"),
             @ApiResponse(responseCode = "404", description = "Cartão não encontrado", content = @Content)
     })
-    @GetMapping("/check/{cardNumber}")
+    @GetMapping("/check")
     @Loggable
-    public ResponseEntity<String> checkCard(@PathVariable String cardNumber) {
-        String systemId = cardService.checkCardExists(cardNumber);
+    public ResponseEntity<String> checkCard(@Valid @RequestBody EncryptedCardCheckRequestDto encryptedCardCheckRequestDto) {
+        String systemId = cardService.checkCardExists(encryptedCardCheckRequestDto.getCardNumber());
         return ResponseEntity.ok(systemId);
     }
 }
