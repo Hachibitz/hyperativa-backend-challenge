@@ -9,7 +9,7 @@ import java.util.Set;
 public final class MaskingUtil {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final Set<String> SENSITIVE_KEYS = Set.of("password", "email", "cardNumber");
+    private static final Set<String> SENSITIVE_KEYS = Set.of("password", "email", "cardNumber", "token");
 
     private MaskingUtil() {
     }
