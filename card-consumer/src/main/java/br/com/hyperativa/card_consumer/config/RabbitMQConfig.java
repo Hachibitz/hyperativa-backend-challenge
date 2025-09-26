@@ -4,7 +4,6 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -16,6 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.retry.support.RetryTemplate;
 
+/**
+ * Configurações do RabbitMQ específicas para o SERVIÇO CONSUMER.
+ * A topologia principal (fila e exchange) é herdada da lib card-common.
+ */
 @Configuration
 public class RabbitMQConfig {
 
@@ -28,27 +31,28 @@ public class RabbitMQConfig {
     @Value("${hyperativa.rabbitmq.exchange-dlx}")
     private String dlxName;
 
+    /**
+     * Declara a Dead Letter Exchange (DLX). Isso é específico do consumer.
+     */
     @Bean
     DirectExchange deadLetterExchange() {
         return new DirectExchange(dlxName);
     }
 
+    /**
+     * Declara a Dead Letter Queue (DLQ). Específico do consumer.
+     */
     @Bean
     Queue deadLetterQueue() {
         return new Queue(dlqName, true);
     }
 
+    /**
+     * Cria a ligação entre a DLX e a DLQ. Específico do consumer.
+     */
     @Bean
     Binding deadLetterBinding(Queue deadLetterQueue, DirectExchange deadLetterExchange) {
         return BindingBuilder.bind(deadLetterQueue).to(deadLetterExchange).with(mainQueueName);
-    }
-
-    @Bean
-    public Queue mainQueue() {
-        return QueueBuilder.durable(mainQueueName)
-                .withArgument("x-dead-letter-exchange", dlxName)
-                .withArgument("x-dead-letter-routing-key", mainQueueName)
-                .build();
     }
 
     @Bean
@@ -66,7 +70,6 @@ public class RabbitMQConfig {
 
         RetryTemplate retryTemplate = getRetryTemplate();
         factory.setRetryTemplate(retryTemplate);
-
         factory.setDefaultRequeueRejected(false);
 
         return factory;

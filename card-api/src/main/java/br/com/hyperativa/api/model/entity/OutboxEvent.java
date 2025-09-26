@@ -38,6 +38,9 @@ public class OutboxEvent {
     @Column(nullable = false)
     private OutboxEventStatus status = OutboxEventStatus.PENDING;
 
+    @Column(name = "error_description")
+    private String errorDescription;
+
     @Embedded
     private Audit audit = new Audit();
 }

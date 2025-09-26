@@ -70,10 +70,12 @@ public class OutboxProcessor {
             try {
                 rabbitTemplate.convertAndSend(event.getDestinationExchange(), event.getDestinationRoutingKey(), event.getPayload());
                 event.setStatus(OutboxEventStatus.SUCCESS);
+                event.setErrorDescription(null);
                 log.info("Successfully sent outbox event: {}", event.getId());
             } catch (Exception e) {
                 log.error("Dispatch failed for outbox event: {}. Marking as FAILURE.", event.getId(), e);
                 event.setStatus(OutboxEventStatus.FAILURE);
+                event.setErrorDescription(e.getMessage());
             }
         }
         outboxEventRepository.saveAll(events);

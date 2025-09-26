@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -59,7 +60,15 @@ public class CardServiceImpl implements ICardService {
         CardBatch batch = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             batch = processHeaderAndCreateBatch(reader, file.getOriginalFilename());
-            streamFileLinesToQueue(reader, batch.getId());
+            int errorCount = streamFileLinesToQueue(reader, batch.getId());
+            if (errorCount > 0) {
+                batch.setStatus(BatchStatusEnum.COMPLETED_WITH_ERRORS);
+                log.info("Batch {} processing finished with {} error(s).", batch.getId(), errorCount);
+            } else {
+                batch.setStatus(BatchStatusEnum.COMPLETED);
+                log.info("Batch {} processing finished successfully.", batch.getId());
+            }
+            cardBatchRepository.save(batch);
             return new UploadCardsResponseDTO(batch.getId().toString(), "File received and processing started.");
         } catch (Exception e) {
             handleProcessingError(e, batch, file.getOriginalFilename());
@@ -82,16 +91,24 @@ public class CardServiceImpl implements ICardService {
         return batch;
     }
 
-    private void streamFileLinesToQueue(BufferedReader reader, UUID jobId) {
+    private int streamFileLinesToQueue(BufferedReader reader, UUID jobId) {
+        AtomicInteger errorCount = new AtomicInteger(0);
+
         reader.lines()
                 .filter(this::isCardLine)
                 .map(this::getCardNumberFromLine)
-                .filter(cardNumber -> {
-                    ValidateCardUtil.validateCardNumber(cardNumber);
-                    return !cardNumber.isEmpty();
-                })
-                .map(cardNumber -> new CardMessageDto(cardNumber, jobId))
-                .forEach(cardProducer::sendMessage);
+                .filter(cardNumber -> !cardNumber.isEmpty())
+                .forEach(cardNumber -> {
+                    try {
+                        ValidateCardUtil.validateCardNumber(cardNumber);
+                        CardMessageDto message = new CardMessageDto(cardNumber, jobId);
+                        cardProducer.sendMessage(message);
+                    } catch (IllegalArgumentException e) {
+                        errorCount.incrementAndGet();
+                        log.error("Invalid card number found in file [{}]. Reason: {}", cardNumber, e.getMessage());
+                    }
+                });
+        return errorCount.get();
     }
 
     private void handleProcessingError(Exception e, CardBatch batch, String filename) {

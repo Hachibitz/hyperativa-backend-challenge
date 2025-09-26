@@ -59,6 +59,7 @@ services:
       - HYPERATIVA_RABBITMQ_QUEUE=cards.queue
       - HYPERATIVA_RABBITMQ_EXCHANGE=cards.exchange
       - HYPERATIVA_RABBITMQ_ROUTINGKEY=cards.routingkey
+      - HYPERATIVA_RABBITMQ_EXCHANGE_DLX=cards.exchange.dlx
     depends_on:
       db:
         condition: service_healthy # Espera o healthcheck do DB passar
@@ -85,6 +86,8 @@ services:
       - HYPERATIVA_RABBITMQ_QUEUE=cards.queue
       - HYPERATIVA_RABBITMQ_DLQ=cards.queue.dlq
       - HYPERATIVA_RABBITMQ_EXCHANGE_DLX=cards.exchange.dlx
+      - HYPERATIVA_RABBITMQ_EXCHANGE=cards.exchange
+      - HYPERATIVA_RABBITMQ_ROUTINGKEY=cards.routingkey
     depends_on:
       db:
         condition: service_healthy # Espera o healthcheck do DB passar

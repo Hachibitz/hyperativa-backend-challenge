@@ -23,6 +23,7 @@ val springBootVersion = "3.5.6"
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springBootVersion")
 	implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+	implementation("org.springframework.boot:spring-boot-starter-amqp:$springBootVersion")
 	compileOnly("org.projectlombok:lombok:1.18.32")
 	annotationProcessor("org.projectlombok:lombok:1.18.32")
 }

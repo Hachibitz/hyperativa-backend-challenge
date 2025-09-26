@@ -11,6 +11,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -21,7 +24,9 @@ import java.util.UUID;
 public class CardBatch {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue
+    @UuidGenerator
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private UUID id;
 
     @Column(nullable = false)
