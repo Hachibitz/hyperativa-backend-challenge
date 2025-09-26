@@ -1,25 +1,25 @@
 spring:
   application:
     name: card-consumer
-    # Configuração do Banco de Dados
-    datasource:
-      url: jdbc:mysql://localhost:3306/hyperativa_db
-      username: ${your_user}
-      password: ${your_password}
-      driver-class-name: com.mysql.cj.jdbc.Driver
+  # Configuração do Banco de Dados
+  datasource:
+    url: jdbc:mysql://localhost:3306/hyperativa_db
+    username: ${your_user}
+    password: ${your_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
-    # Configuração do JPA/Hibernate
-    jpa:
-      hibernate:
-        ddl-auto: update
-      show-sql: false
+  # Configuração do JPA/Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
 
-    # Configuração do RabbitMQ
-    rabbitmq:
-      host: localhost
-      port: 5672
-      username: ${your_user}
-      password: ${your_password}
+  # Configuração do RabbitMQ
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: ${your_user}
+    password: ${your_password}
 
 # Propriedades customizadas
 encryption:
@@ -29,3 +29,5 @@ encryption:
 hyperativa:
   rabbitmq:
     queue: cards.queue
+    dlq: cards.queue.dlq
+    exchange-dlx: cards.exchange.dlx
