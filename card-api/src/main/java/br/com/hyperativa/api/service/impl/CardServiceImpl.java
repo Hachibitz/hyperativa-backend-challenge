@@ -86,7 +86,10 @@ public class CardServiceImpl implements ICardService {
         reader.lines()
                 .filter(this::isCardLine)
                 .map(this::getCardNumberFromLine)
-                .filter(cardNumber -> !cardNumber.isEmpty())
+                .filter(cardNumber -> {
+                    ValidateCardUtil.validateCardNumber(cardNumber);
+                    return !cardNumber.isEmpty();
+                })
                 .map(cardNumber -> new CardMessageDto(cardNumber, jobId))
                 .forEach(cardProducer::sendMessage);
     }
@@ -168,8 +171,10 @@ public class CardServiceImpl implements ICardService {
     }
 
     private String getCardNumberFromLine(String line) {
-        if (line.length() >= 26) {
-            return line.substring(7, 26).trim();
+        // Remove múltiplos espaços e pega o segundo "token" da linha
+        String[] parts = line.trim().split("\\s+");
+        if (parts.length >= 2) {
+            return parts[1]; // Retorna a segunda parte (número do cartão)
         }
         return "";
     }

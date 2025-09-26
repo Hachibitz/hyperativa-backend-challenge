@@ -8,6 +8,9 @@ spring:
     name: api
   profiles:
     active: local
+  rabbitmq:
+    admin:
+      auto-startup: false
 
 springdoc:
   api-docs:
