@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class CardController {
             @ApiResponse(responseCode = "202", description = "Arquivo recebido e processamento iniciado"),
             @ApiResponse(responseCode = "400", description = "Arquivo inválido ou vazio", content = @Content)
     })
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Loggable
     public ResponseEntity<UploadCardsResponseDTO> uploadFile(@RequestParam("file") MultipartFile file) {
         UploadCardsResponseDTO response = cardService.processCardFile(file);
