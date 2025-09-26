@@ -83,6 +83,8 @@ services:
       - SPRING_RABBITMQ_PASSWORD=hyper_password
       - ENCRYPTION_AES_SECRET-KEY=KVQcNxRLaSI0LmvtgXx5AH+9VOIARMMk3o34QLSSFNE=
       - HYPERATIVA_RABBITMQ_QUEUE=cards.queue
+      - HYPERATIVA_RABBITMQ_DLQ=cards.queue.dlq
+      - HYPERATIVA_RABBITMQ_EXCHANGE_DLX=cards.exchange.dlx
     depends_on:
       db:
         condition: service_healthy # Espera o healthcheck do DB passar
