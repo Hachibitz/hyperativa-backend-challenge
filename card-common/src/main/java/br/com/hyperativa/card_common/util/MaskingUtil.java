@@ -61,7 +61,7 @@ public final class MaskingUtil {
      */
     private static void maskNode(ObjectNode node) {
         node.fieldNames().forEachRemaining(fieldName -> {
-            if (SENSITIVE_KEYS.contains(fieldName.toLowerCase())) {
+            if (SENSITIVE_KEYS.contains(fieldName)) {
                 node.put(fieldName, "**********");
             } else if (node.get(fieldName).isObject()) {
                 maskNode((ObjectNode) node.get(fieldName));
