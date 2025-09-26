@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -32,12 +33,11 @@ public class CryptoConfig {
             keyBytes = inputStream.readAllBytes();
         }
 
-        String privateKeyPEM = new String(keyBytes)
+        String privateKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PRIVATE KEY-----", "")
-                .replaceAll("\\s", "")
                 .replace("-----END PRIVATE KEY-----", "");
 
-        byte[] decodedKey = Base64.getDecoder().decode(privateKeyPEM);
+        byte[] decodedKey = Base64.getMimeDecoder().decode(privateKeyPEM);
 
         PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(decodedKey);
         KeyFactory kf = KeyFactory.getInstance("RSA");
@@ -51,12 +51,11 @@ public class CryptoConfig {
             keyBytes = inputStream.readAllBytes();
         }
 
-        String publicKeyPEM = new String(keyBytes)
+        String publicKeyPEM = new String(keyBytes, StandardCharsets.UTF_8)
                 .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replaceAll("\\s", "")
                 .replace("-----END PUBLIC KEY-----", "");
 
-        byte[] decodedKey = Base64.getDecoder().decode(publicKeyPEM);
+        byte[] decodedKey = Base64.getMimeDecoder().decode(publicKeyPEM);
 
         X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
         KeyFactory kf = KeyFactory.getInstance("RSA");
