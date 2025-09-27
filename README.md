@@ -32,8 +32,8 @@ docker-compose up --build
 
 ### **Acessando os Serviços**
 
-- **API**: A API estará disponível em <https://localhost:8080>.
-  - A documentação Swagger/OpenAPI pode ser acessada em **<https://localhost:8080/swagger-ui.html>**.
+- **API**: A API estará disponível em <https://localhost:8080/api>.
+  - A documentação Swagger/OpenAPI pode ser acessada em **<https://localhost:8080/api/swagger-ui.html>**.
   - Vai ter um aviso de conexão não segura pq o certificado é auto assinado apenas para o desafio, só continuar e ignorar esse aviso.
 - **RabbitMQ Management**: A interface web do RabbitMQ estará em <http://localhost:15672>.
   - **Usuário**: hyper_user
