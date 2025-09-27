@@ -53,7 +53,7 @@ Para interagir com os endpoints protegidos, siga os passos de autenticação aba
 
 ### **Setup de Autenticação (Necessário para ambos os fluxos)**
 
-- **Acesse a documentação do Swagger**: [https://localhost:8080/swagger-ui.html](https://www.google.com/search?q=https://localhost:8080/swagger-ui.html)
+- **Acesse a documentação do Swagger**: [https://localhost:8080/api/swagger-ui.html](https://localhost:8080/api/swagger-ui.html)
 - **Obtenha o Token de Acesso**: Vá até o endpoint POST /auth/login e execute-o com as seguintes credenciais para obter um token JWT:
   - **Usuário**: testuser
   - **Senha**: password
