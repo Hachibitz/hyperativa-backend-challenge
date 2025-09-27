@@ -4,6 +4,10 @@ Esta é uma implementação para o desafio de backend da Hyperativa, construída
 
 A solução é composta por dois serviços principais (api e card-consumer) e utiliza um message broker (RabbitMQ) para comunicação assíncrona, com todas as configurações e dados sensíveis gerenciados de forma segura.
 
+## **Arquitetura do fluxo de processamento (foco no processamento de arquivo)**
+
+<img width="1095" height="802" alt="image" src="https://github.com/user-attachments/assets/d67bcb22-f584-421f-b7b3-139ad38250d2" />
+
 ## **🚀 Rodando o Projeto Localmente com Docker**
 
 Com este setup, você pode rodar toda a stack da aplicação (API, Consumer, Banco de Dados e Fila) com um único comando.
