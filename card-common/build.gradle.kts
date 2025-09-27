@@ -13,6 +13,10 @@ java {
 	}
 }
 
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
 repositories {
 	mavenCentral()
 }
@@ -26,6 +30,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-amqp:$springBootVersion")
 	compileOnly("org.projectlombok:lombok:1.18.32")
 	annotationProcessor("org.projectlombok:lombok:1.18.32")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 publishing {
